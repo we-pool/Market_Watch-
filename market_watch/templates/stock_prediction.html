@@ -1,0 +1,156 @@
+{% extends 'base.html' %} {% block title %}{{stock_name}} {% endblock title %} {% block body %}
+
+<div id="wrapper">
+    <div style="margin-left:30px">
+        <div class="row">
+            <h1 class="page-header">{{stock_name }} Market Watch</h1>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="panel panel-blue">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-chart-line fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{open}}</div>
+                                    <div>Open</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-level-up-alt fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{high}}</div>
+                                    <div>High</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-level-down-alt fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{low}}</div>
+                                    <div>Low</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-search-dollar fa-5x">
+                                        <i class="fa fa-ban fa-xs" style="color: #919090; left: 17px; position: absolute; opacity: .9; top: 2px;"></i>
+                                    </i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{close}}</div>
+                                    <div>Close</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="panel panel-blueviolet">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-comments-dollar fa-5x"></i>
+
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{volume}}</div>
+                                    <div>Volume</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-container" style="grid-template-columns:auto auto auto">
+                <div class="grid-item chart">
+                    <div class="outer-center">
+                        <div>
+                            <select id="selectButton"></select>
+                            <script>
+                                var prediction_data = JSON.parse('{{df_prediction|safe}}');
+                                var columns = JSON.parse('{{cols|safe}}')
+                            </script>
+                            <div id="my_dataviz"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-item pie">
+
+                    <script>
+                        var positive_headlines = parseInt('{{positive}}')
+                        var negative_headlines = parseInt('{{negative}}')
+                    </script>
+                    <div id="my_dataviz_pie_chart"></div>
+                    <h2>Market sentiments at a glance</h2>
+                </div>
+            </div>
+            <div class="row">
+                <table class="sentiment-table table table-striped table-bordered table-hover table-sm table-responsive">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Headline</th>
+                            <th scope="col">Compound</th>
+                            <th scope="col">Sentiment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in headlines_sentiment %}
+                        <tr>
+                            <th scope="row">{{forloop.counter}}</th>
+                            <td>{{row.date}}</td>
+                            <td>{{row.title}}</td>
+                            <td>{{row.compound}}</td>
+                            <td>
+                                <i class="{% if row.sentiment == 1 %}
+                                em em-grinning 
+                              {% else %}
+                              em em-disappointed_relieved 
+                              {% endif %}" aria-role="presentation" aria-label="{% if row.sentiment == 1 %}
+                              GRINNING FACE
+                            {% else %}
+                            DISAPPOINTED BUT RELIEVED FACE 
+                            {% endif %}"></i>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- /#wrapper -->
+
+    </div>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <link href="https://emoji-css.afeld.me/emoji.css" rel="stylesheet"> {% load static %}
+    <script src="{% static 'js/prediction-chart.js' %}"></script>
+    <script src="{% static 'js/pie-chart.js' %}"></script>
+
+    {% endblock body %} {% load static %}
